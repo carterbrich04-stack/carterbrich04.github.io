@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carter's Travel Map</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F5F5F5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #4169E1;
+            margin: 0 0 10px 0;
+            font-size: 28pt;
+        }
+        .header p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: #4169E1;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 10px;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        .map-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        .legend {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .legend h3 {
+            color: #4169E1;
+            margin-top: 0;
+        }
+        .legend-item {
+            margin: 10px 0;
+            padding: 8px;
+            background: #f9f9f9;
+            border-left: 4px solid #4169E1;
+            border-radius: 3px;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .country-count {
+            font-weight: bold;
+            color: #4169E1;
+            text-align: center;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 8px;
+            font-size: 18pt;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            #map {
+                height: 400px;
+            }
+            .legend-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 22pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="hobbies.html" target="_blank">← Back to Hobbies</a>
+        </div>
+
+        <div class="header">
+            <h1>My Travel Map</h1>
+            <p>Exploring the world — 16 countries visited</p>
+        </div>
+
+        <div class="country-count">
+            🌍 16 Countries Visited
+        </div>
+
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
+
+        <div class="legend">
+            <h3>Countries Visited</h3>
+            <div class="legend-grid">
+                <div class="legend-item">🇺🇸 United States</div>
+                <div class="legend-item">🇨🇦 Canada</div>
+                <div class="legend-item">🇲🇽 Mexico</div>
+                <div class="legend-item">🇧🇸 The Bahamas</div>
+                <div class="legend-item">🇿🇼 Zimbabwe</div>
+                <div class="legend-item">🇿🇦 South Africa</div>
+                <div class="legend-item">🇧🇼 Botswana</div>
+                <div class="legend-item">🇫🇷 France</div>
+                <div class="legend-item">🇬🇧 United Kingdom</div>
+                <div class="legend-item">🇮🇹 Italy</div>
+                <div class="legend-item">🇧🇪 Belgium</div>
+                <div class="legend-item">🇨🇭 Switzerland</div>
+                <div class="legend-item">🇳🇱 The Netherlands</div>
+                <div class="legend-item">🇮🇩 Indonesia</div>
+                <div class="legend-item">🇯🇵 Japan</div>
+                <div class="legend-item">🇸🇬 Singapore</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Initialize map centered on world view
+        const map = L.map('map').setView([20, 0], 2);
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19,
+            minZoom: 2
+        }).addTo(map);
+
+        // Country data with coordinates for markers
+        const countries = [
+            {name: 'United States', coords: [39.8283, -98.5795], flag: '🇺🇸'},
+            {name: 'Canada', coords: [56.1304, -106.3468], flag: '🇨🇦'},
+            {name: 'Mexico', coords: [23.6345, -102.5528], flag: '🇲🇽'},
+            {name: 'The Bahamas', coords: [25.0343, -77.3963], flag: '🇧🇸'},
+            {name: 'Zimbabwe', coords: [-19.0154, 29.1549], flag: '🇿🇼'},
+            {name: 'South Africa', coords: [-30.5595, 22.9375], flag: '🇿🇦'},
+            {name: 'Botswana', coords: [-22.3285, 24.6849], flag: '🇧🇼'},
+            {name: 'France', coords: [46.2276, 2.2137], flag: '🇫🇷'},
+            {name: 'United Kingdom', coords: [55.3781, -3.4360], flag: '🇬🇧'},
+            {name: 'Italy', coords: [41.8719, 12.5674], flag: '🇮🇹'},
+            {name: 'Belgium', coords: [50.5039, 4.4699], flag: '🇧🇪'},
+            {name: 'Switzerland', coords: [46.8182, 8.2275], flag: '🇨🇭'},
+            {name: 'The Netherlands', coords: [52.1326, 5.2913], flag: '🇳🇱'},
+            {name: 'Indonesia', coords: [-0.7893, 113.9213], flag: '🇮🇩'},
+            {name: 'Japan', coords: [36.2048, 138.2529], flag: '🇯🇵'},
+            {name: 'Singapore', coords: [1.3521, 103.8198], flag: '🇸🇬'}
+        ];
+
+        // Create custom marker icons
+        const visitedIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background: #4169E1; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; border: 3px solid #4169E1; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">✓</div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
+        });
+
+        // Add markers for each country
+        countries.forEach(country => {
+            L.marker(country.coords, {icon: visitedIcon})
+                .bindPopup(`<strong>${country.flag} ${country.name}</strong><br><small>Visited</small>`)
+                .addTo(map);
+        });
+
+        // Add a subtle visual effect - pulse on load
+        map.on('load', () => {
+            console.log('Map loaded successfully with 16 visited countries!');
+        });
+    </script>
+</body>
+</html>
